@@ -244,6 +244,32 @@ footer {
     border-top: 1px solid var(--border-color);
 }
 
+/* Footer links section */
+.footer-links {
+    margin: 15px 0;
+}
+
+.youtube-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 15px;
+    border-radius: 6px;
+    background-color: #ff0000;
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+    transition: background-color 0.2s;
+}
+
+.youtube-link:hover {
+    background-color: #cc0000;
+}
+
+.youtube-link i {
+    font-size: 1.2rem;
+}
+
 @media (max-width: 768px) {
     .controls {
         flex-direction: column;
