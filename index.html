@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gigguk Anime Recommendations</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-tv"></i> Gigguk Anime Recommendations</h1>
+            <p class="subtitle">Discover anime recommendations from Gigguk's videos</p>
+        </header>
+
+        <div class="controls">
+            <div class="select-container">
+                <label for="csv-select">Select Video:</label>
+                <select id="csv-select">
+                    <!-- Options will be populated dynamically -->
+                </select>
+            </div>
+            <div class="search-container">
+                <input type="text" id="search-input" placeholder="Search anime...">
+                <button id="search-btn"><i class="fas fa-search"></i></button>
+            </div>
+            <div class="filter-container">
+                <select id="excitement-filter">
+                    <option value="all">All Excitement Levels</option>
+                    <option value="Yes">Excited</option>
+                    <option value="Neutral">Neutral</option>
+                    <option value="No">Not Excited</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table id="anime-table">
+                <thead>
+                    <tr>
+                        <th>Anime Title <span class="sort-icon" data-column="title"><i class="fas fa-sort"></i></span></th>
+                        <th>Timestamp <span class="sort-icon" data-column="timestamp"><i class="fas fa-sort"></i></span></th>
+                        <th>Excitement <span class="sort-icon" data-column="excited"><i class="fas fa-sort"></i></span></th>
+                        <th>Notes</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body">
+                    <!-- Table content will be populated dynamically -->
+                </tbody>
+            </table>
+        </div>
+
+        <div id="no-results" class="hidden">
+            <p>No results found. Try a different search term.</p>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Loading data...</p>
+        </div>
+
+        <footer>
+            <p>Created using data from Gigguk's anime reviews. Last updated: May 4, 2025</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

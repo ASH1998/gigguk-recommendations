@@ -247,7 +247,7 @@ def main():
     extractor = AnimeExtractor()
     
     # Process a video
-    video_id = "WnXVwjCYQcU"  # Replace with the desired video ID
+    video_id = "qUkxvTi06ww"  # Replace with the desired video ID
     
     # Example: Process a specific video
     csv_path = extractor.process_video(video_id)

@@ -1,0 +1,243 @@
+/* Modern UI Styling for Gigguk Anime Recommendations */
+:root {
+    --primary-color: #5f65f5;
+    --secondary-color: #ff6b6b;
+    --background-color: #f9f9f9;
+    --card-background: #ffffff;
+    --text-color: #333333;
+    --border-color: #e0e0e0;
+    --hover-color: #f0f0ff;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 30px 20px;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+h1 {
+    font-size: 2.5rem;
+    color: var(--primary-color);
+    margin-bottom: 10px;
+}
+
+.subtitle {
+    font-size: 1.1rem;
+    color: #666;
+}
+
+.controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.select-container, .search-container, .filter-container {
+    margin-bottom: 10px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+
+select, input {
+    padding: 10px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 1rem;
+    background-color: var(--card-background);
+}
+
+select {
+    min-width: 250px;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%235f65f5%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+    background-repeat: no-repeat;
+    background-position: right 15px top 50%;
+    background-size: 12px auto;
+}
+
+input {
+    min-width: 250px;
+}
+
+button {
+    padding: 10px 15px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+button:hover {
+    background-color: #4348d6;
+}
+
+.search-container {
+    display: flex;
+    align-items: center;
+}
+
+.search-container button {
+    margin-left: 10px;
+}
+
+.table-container {
+    background-color: var(--card-background);
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    margin-bottom: 30px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+th {
+    background-color: #f6f6ff;
+    font-weight: 600;
+    color: var(--primary-color);
+    position: relative;
+}
+
+.sort-icon {
+    cursor: pointer;
+    margin-left: 5px;
+}
+
+tbody tr:hover {
+    background-color: var(--hover-color);
+}
+
+.hidden {
+    display: none;
+}
+
+#no-results {
+    text-align: center;
+    padding: 30px;
+    font-size: 1.1rem;
+    color: #666;
+}
+
+.loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 50px 0;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(95, 101, 245, 0.2);
+    border-radius: 50%;
+    border-top-color: var(--primary-color);
+    animation: spin 1s ease-in-out infinite;
+    margin-bottom: 15px;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+footer {
+    text-align: center;
+    margin-top: 40px;
+    padding-top: 20px;
+    color: #777;
+    font-size: 0.9rem;
+    border-top: 1px solid var(--border-color);
+}
+
+@media (max-width: 768px) {
+    .controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .select-container, .search-container, .filter-container {
+        width: 100%;
+    }
+    
+    select, input {
+        width: 100%;
+    }
+    
+    .search-container {
+        display: flex;
+    }
+    
+    .search-container input {
+        flex-grow: 1;
+    }
+    
+    th, td {
+        padding: 10px;
+    }
+    
+    th:nth-child(3), td:nth-child(3) {
+        display: none;
+    }
+}
+
+/* Excitement level styling */
+.excitement-yes {
+    color: #2ecc71;
+    font-weight: bold;
+}
+
+.excitement-neutral {
+    color: #f39c12;
+}
+
+.excitement-no {
+    color: #e74c3c;
+}
+
+/* Timestamp styling */
+.timestamp {
+    font-family: monospace;
+    background-color: #f0f0f0;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
