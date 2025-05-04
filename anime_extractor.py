@@ -278,7 +278,16 @@ class AnimeExtractor:
 def main():
     """
     Example usage of the AnimeExtractor class.
+    Command-line usage: python anime_extractor.py <video_id>
     """
+    import argparse
+    
+    # Set up command-line argument parsing
+    parser = argparse.ArgumentParser(description='Extract anime references from Gigguk YouTube videos')
+    parser.add_argument('video_id', nargs='?', default="qUkxvTi06ww", 
+                        help='YouTube video ID to process (default: qUkxvTi06ww)')
+    args = parser.parse_args()
+    
     # Load environment variables from .env file
     print("Attempting to load .env file...")
     load_dotenv()
@@ -298,10 +307,11 @@ def main():
     # Create extractor
     extractor = AnimeExtractor()
     
-    # Process a video
-    video_id = "qUkxvTi06ww"  # Replace with the desired video ID
+    # Get video ID from command-line arguments
+    video_id = args.video_id
+    print(f"Processing video ID: {video_id}")
     
-    # Example: Process a specific video
+    # Process the specified video
     csv_path = extractor.process_video(video_id)
     if csv_path:
         print(f"Successfully processed video and saved to {csv_path}")

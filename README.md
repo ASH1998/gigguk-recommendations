@@ -14,6 +14,7 @@ A modern web application that organizes and displays anime recommendations from 
 - **📱 Responsive Design**: Works on desktop and mobile devices
 - **🌓 Dark Mode**: Toggle between light and dark themes
 - **🔄 Dynamic Loading**: CSV data loads on demand
+- **💻 Command-Line Support**: Easily extract data from new videos via command-line
 
 ## 📋 Contents
 
@@ -77,7 +78,7 @@ You can view a live demo of the application here: [Live Demo](http://portfolio.a
    ```
 
 5. Open your browser and navigate to:
-   ```
+   ```bash
    http://localhost:8000
    ```
 
@@ -99,16 +100,20 @@ To extract anime references from a new Gigguk video:
 
 2. Run the extraction script with the YouTube video ID:
    ```bash
+   python anime_extractor.py YOUR_VIDEO_ID
+   ```
+
+3. If no video ID is provided, it will use the default video:
+   ```bash
    python anime_extractor.py
    ```
 
-3. For custom usage, you can modify the `video_id` in the script:
-   ```python
-   # In anime_extractor.py
-   video_id = "YOUR_VIDEO_ID_HERE"
+4. You can also see command-line help:
+   ```bash
+   python anime_extractor.py --help
    ```
 
-4. The script will:
+5. The script will:
    - Download the video transcript
    - Extract timestamps from the video description
    - Use Google's Gemini model to identify anime references
