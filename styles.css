@@ -61,25 +61,51 @@ h1 {
 
 .controls {
     display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
+    flex-direction: column;
     margin-bottom: 20px;
-    flex-wrap: wrap;
     gap: 15px;
 }
 
-.select-container, .filter-container {
-    margin-bottom: 8px;
+.top-controls {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.select-container {
+    flex: 4;
     display: flex;
     flex-direction: column;
-    flex: 0 1 auto;
+    margin-bottom: 8px;
+}
+
+.filter-container {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 8px;
 }
 
 .search-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 8px;
+}
+
+.search-input-group {
     display: flex;
     align-items: center;
+    width: 100%;
+}
+
+.search-input-group input {
     flex-grow: 1;
-    margin: 0 10px;
+    margin-right: 10px;
+}
+
+.search-input-group button {
+    min-width: 40px;
 }
 
 label {

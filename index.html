@@ -31,23 +31,29 @@
         </header>
 
         <div class="controls">
-            <div class="select-container">
-                <label for="csv-select">Select Video:</label>
-                <select id="csv-select">
-                    <!-- Options will be populated dynamically -->
-                </select>
+            <div class="top-controls">
+                <div class="select-container">
+                    <label for="csv-select">Select Video:</label>
+                    <select id="csv-select">
+                        <!-- Options will be populated dynamically -->
+                    </select>
+                </div>
+                <div class="filter-container">
+                    <label for="excitement-filter">Filter by Excitement:</label>
+                    <select id="excitement-filter">
+                        <option value="all">All Excitement Levels</option>
+                        <option value="Yes">Excited</option>
+                        <option value="Neutral">Neutral</option>
+                        <option value="No">Not Excited</option>
+                    </select>
+                </div>
             </div>
             <div class="search-container">
-                <input type="text" id="search-input" placeholder="Search anime...">
-                <button id="search-btn"><i class="fas fa-search"></i></button>
-            </div>
-            <div class="filter-container">
-                <select id="excitement-filter">
-                    <option value="all">All Excitement Levels</option>
-                    <option value="Yes">Excited</option>
-                    <option value="Neutral">Neutral</option>
-                    <option value="No">Not Excited</option>
-                </select>
+                <label for="search-input">Search Anime:</label>
+                <div class="search-input-group">
+                    <input type="text" id="search-input" placeholder="Search anime...">
+                    <button id="search-btn"><i class="fas fa-search"></i></button>
+                </div>
             </div>
         </div>
 

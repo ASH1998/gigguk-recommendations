@@ -1,6 +1,7 @@
 import os
 import csv
 import io
+import json
 import base64
 from dotenv import load_dotenv
 from google import genai
@@ -13,18 +14,20 @@ class AnimeExtractor:
     A class to extract anime references from Gigguk YouTube videos using Gemini API.
     """
     
-    def __init__(self, output_dir="transcripts", api_key=None):
+    def __init__(self, output_dir="transcripts", api_key=None, config_file="csv_config.json"):
         """
         Initialize the AnimeExtractor with necessary components.
         
         Args:
             output_dir (str): Directory where transcript and output files will be saved
             api_key (str): Google Gemini API key. If None, it will be read from GEMINI_API_KEY env variable
+            config_file (str): Path to the configuration file for tracking CSV files
         """
         # Load environment variables from .env file
         load_dotenv()
         
         self.output_dir = output_dir
+        self.config_file = config_file
         self.yt_extractor = YouTubeDataExtractor(output_dir=output_dir)
         self.api_key = api_key or os.environ.get("GEMINI_API_KEY")
         
@@ -33,6 +36,53 @@ class AnimeExtractor:
             
         # Initialize Gemini client
         self.gemini_client = genai.Client(api_key=self.api_key)
+        
+    def _read_csv_config(self):
+        """
+        Read the CSV configuration file.
+        
+        Returns:
+            dict: The configuration with 'files' list or an empty dict with 'files' as empty list if file doesn't exist
+        """
+        try:
+            if os.path.exists(self.config_file):
+                with open(self.config_file, 'r', encoding='utf-8') as f:
+                    return json.load(f)
+            else:
+                return {"files": []}
+        except Exception as e:
+            print(f"Error reading CSV config file: {str(e)}")
+            return {"files": []}
+    
+    def _update_csv_config(self, csv_filename):
+        """
+        Update the CSV configuration file with a new CSV file if it doesn't already exist.
+        
+        Args:
+            csv_filename (str): The filename of the CSV to add to the config
+            
+        Returns:
+            bool: True if successful, False otherwise
+        """
+        try:
+            # Read current config
+            config = self._read_csv_config()
+            
+            # Check if the file is already in the config
+            if csv_filename not in config["files"]:
+                # Add the new file to the list
+                config["files"].append(csv_filename)
+                
+                # Write updated config back to file
+                with open(self.config_file, 'w', encoding='utf-8') as f:
+                    json.dump(config, f, indent=2)
+                    
+                print(f"Added {csv_filename} to CSV configuration file")
+            
+            return True
+        except Exception as e:
+            print(f"Error updating CSV config file: {str(e)}")
+            return False
     
     def process_video(self, video_id, output_csv=None):
         """
@@ -91,6 +141,8 @@ class AnimeExtractor:
         
         if success:
             print(f"Successfully saved anime references to {csv_path}")
+            # Update the CSV configuration file
+            self._update_csv_config(output_csv)
             return csv_path
         else:
             print(f"Error: Failed to save CSV file")

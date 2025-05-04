@@ -64,43 +64,26 @@ document.addEventListener('DOMContentLoaded', () => {
         loading.classList.remove('hidden');
         
         try {
-            // Get list of CSV files from the transcripts directory
-            const response = await fetch('transcripts/');
+            // Get list of CSV files from the config file
+            const response = await fetch('csv_config.json');
             
             if (!response.ok) {
-                // If direct fetch fails, use a hardcoded list
-                // This is a fallback for GitHub Pages which doesn't support directory listing
-                const files = [
-                    'Fall 2024 Anime in a Nutshell_anime_references.csv'
-                ];
-                
-                populateSelect(files);
-                
-                // Load the first CSV by default
-                if (files.length > 0) {
-                    csvSelect.value = files[0];
-                    loadSelectedCSV();
-                }
-            } else {
-                const html = await response.text();
-                
-                // Parse the HTML to extract filenames
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(html, 'text/html');
-                const links = Array.from(doc.querySelectorAll('a'));
-                
-                const files = links
-                    .map(link => link.href)
-                    .filter(href => href.endsWith('.csv'))
-                    .map(href => href.split('/').pop());
-                
-                populateSelect(files);
-                
-                // Load the first CSV by default
-                if (files.length > 0) {
-                    csvSelect.value = files[0];
-                    loadSelectedCSV();
-                }
+                throw new Error('Failed to load CSV configuration file');
+            }
+            
+            const config = await response.json();
+            const files = config.files || [];
+            
+            if (files.length === 0) {
+                console.warn('No CSV files found in configuration');
+            }
+            
+            populateSelect(files);
+            
+            // Load the first CSV by default
+            if (files.length > 0) {
+                csvSelect.value = files[0];
+                loadSelectedCSV();
             }
         } catch (error) {
             console.error('Error loading CSV list:', error);
