@@ -7,6 +7,19 @@
     --text-color: #333333;
     --border-color: #e0e0e0;
     --hover-color: #f0f0ff;
+    --input-text-color: #333333;
+}
+
+/* Dark mode variables */
+[data-theme="dark"] {
+    --primary-color: #7b80ff;
+    --secondary-color: #ff8585;
+    --background-color: #121212;
+    --card-background: #1e1e1e;
+    --text-color: #e0e0e0;
+    --border-color: #444444;
+    --hover-color: #2a2a42;
+    --input-text-color: #e0e0e0;
 }
 
 * {
@@ -20,12 +33,14 @@ body {
     background-color: var(--background-color);
     color: var(--text-color);
     line-height: 1.6;
+    transition: background-color 0.3s, color 0.3s;
 }
 
 .container {
-    max-width: 1200px;
+    width: 95%;
+    max-width: 1400px;
     margin: 0 auto;
-    padding: 30px 20px;
+    padding: 30px 10px;
 }
 
 header {
@@ -47,14 +62,24 @@ h1 {
 .controls {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    margin-bottom: 25px;
+    align-items: flex-end;
+    margin-bottom: 20px;
     flex-wrap: wrap;
     gap: 15px;
 }
 
-.select-container, .search-container, .filter-container {
-    margin-bottom: 10px;
+.select-container, .filter-container {
+    margin-bottom: 8px;
+    display: flex;
+    flex-direction: column;
+    flex: 0 1 auto;
+}
+
+.search-container {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+    margin: 0 10px;
 }
 
 label {
@@ -64,15 +89,16 @@ label {
 }
 
 select, input {
-    padding: 10px 15px;
+    padding: 10px;
     border: 1px solid var(--border-color);
     border-radius: 6px;
     font-size: 1rem;
     background-color: var(--card-background);
+    color: var(--input-text-color);
 }
 
 select {
-    min-width: 250px;
+    min-width: 200px;
     cursor: pointer;
     appearance: none;
     background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%235f65f5%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
@@ -82,11 +108,13 @@ select {
 }
 
 input {
-    min-width: 250px;
+    min-width: 300px;
+    height: 38px;
 }
 
 button {
     padding: 10px 15px;
+    height: 38px;
     background-color: var(--primary-color);
     color: white;
     border: none;
@@ -100,13 +128,12 @@ button:hover {
     background-color: #4348d6;
 }
 
-.search-container {
-    display: flex;
-    align-items: center;
-}
-
 .search-container button {
     margin-left: 10px;
+}
+
+.search-container input {
+    flex-grow: 1;
 }
 
 .table-container {
@@ -129,10 +156,13 @@ th, td {
 }
 
 th {
-    background-color: #f6f6ff;
-    font-weight: 600;
+    background: linear-gradient(90deg, var(--hover-color) 0%, var(--card-background) 100%);
+    font-weight: 700;
+    font-size: 1.1rem;
     color: var(--primary-color);
     position: relative;
+    border-bottom: 2px solid var(--border-color);
+    padding: 18px 15px;
 }
 
 .sort-icon {
@@ -192,10 +222,12 @@ footer {
     .controls {
         flex-direction: column;
         align-items: stretch;
+        gap: 8px;
     }
     
     .select-container, .search-container, .filter-container {
         width: 100%;
+        margin: 5px 0;
     }
     
     select, input {
@@ -204,6 +236,7 @@ footer {
     
     .search-container {
         display: flex;
+        margin: 5px 0;
     }
     
     .search-container input {
@@ -211,11 +244,17 @@ footer {
     }
     
     th, td {
-        padding: 10px;
+        padding: 10px 5px;
     }
     
     th:nth-child(3), td:nth-child(3) {
         display: none;
+    }
+}
+
+@media (min-width: 1600px) {
+    .container {
+        max-width: 1800px;
     }
 }
 
@@ -240,4 +279,151 @@ footer {
     padding: 2px 6px;
     border-radius: 4px;
     font-size: 0.9rem;
+}
+
+/* Dark Mode Toggle */
+.theme-switch-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 10px 0;
+}
+
+.theme-switch {
+    display: inline-block;
+    height: 24px;
+    position: relative;
+    width: 48px;
+}
+
+.theme-switch input {
+    display: none;
+}
+
+.slider {
+    background-color: #ccc;
+    bottom: 0;
+    cursor: pointer;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    transition: .4s;
+    border-radius: 24px;
+}
+
+.slider:before {
+    background-color: white;
+    bottom: 4px;
+    content: "";
+    height: 16px;
+    left: 4px;
+    position: absolute;
+    transition: .4s;
+    width: 16px;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: var(--primary-color);
+}
+
+input:checked + .slider:before {
+    transform: translateX(24px);
+}
+
+.slider-icon {
+    color: #f1c40f;
+    font-size: 14px;
+    margin-right: 5px;
+}
+
+/* Contributor section */
+.contributor {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.9rem;
+}
+
+.contributor a {
+    color: var(--primary-color);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.contributor a:hover {
+    text-decoration: underline;
+}
+
+/* Contributor Logo Styles */
+.contributor-logo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 10px 0 20px;
+    gap: 15px;
+}
+
+.contributor-logo a {
+    color: var(--text-color);
+    text-decoration: none;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.contributor-logo a:hover {
+    background-color: var(--accent-color);
+    color: white;
+}
+
+.contributor-logo .fa-github {
+    font-size: 1.5rem;
+}
+
+/* Contributor links near dark mode toggle */
+.contributor-links {
+    display: flex;
+    gap: 10px;
+    margin-right: 15px;
+}
+
+.contributor-links a {
+    color: var(--text-color);
+    font-size: 1.2rem;
+    transition: color 0.3s;
+}
+
+.contributor-links a:hover {
+    color: var(--accent-color);
+}
+
+/* Adjust table for dark mode */
+[data-theme="dark"] th {
+    background: linear-gradient(90deg, #353545 0%, var(--card-background) 100%);
+}
+
+[data-theme="dark"] .timestamp {
+    background-color: #333;
+}
+
+/* Adjust select dropdown arrow for dark mode */
+[data-theme="dark"] select {
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%237b80ff%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+}
+
+/* Adjust placeholder text color for dark mode */
+[data-theme="dark"] input::placeholder {
+    color: #aaa;
+}
+
+/* Adjust options text color for dark mode */
+[data-theme="dark"] option {
+    background-color: var(--card-background);
+    color: var(--input-text-color);
 }

@@ -83,3 +83,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+# run local server with: python -m http.server 8000

@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const noResults = document.getElementById('no-results');
     const loading = document.getElementById('loading');
     const sortIcons = document.querySelectorAll('.sort-icon');
+    const themeToggle = document.getElementById('theme-toggle');
 
     // State
     let animeData = [];
@@ -19,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initialize
     loadCSVList();
+    initTheme();
 
     // Event Listeners
     csvSelect.addEventListener('change', loadSelectedCSV);
@@ -35,7 +37,29 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // Theme switcher
+    themeToggle.addEventListener('change', () => {
+        if (themeToggle.checked) {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            localStorage.setItem('theme', 'dark');
+        } else {
+            document.documentElement.setAttribute('data-theme', 'light');
+            localStorage.setItem('theme', 'light');
+        }
+    });
+
     // Functions
+    function initTheme() {
+        // Check for saved theme preference or use device preference
+        const savedTheme = localStorage.getItem('theme') || 
+            (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        
+        if (savedTheme === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            themeToggle.checked = true;
+        }
+    }
+
     async function loadCSVList() {
         loading.classList.remove('hidden');
         
@@ -100,18 +124,66 @@ document.addEventListener('DOMContentLoaded', () => {
         // Clear existing options
         csvSelect.innerHTML = '';
         
+        // Sort files by year (descending) and season (Spring > Summer > Fall > Winter)
+        const sortedFiles = [...files].sort((a, b) => {
+            // Extract year and season from filenames
+            const yearA = extractYear(a);
+            const yearB = extractYear(b);
+            const seasonA = extractSeason(a);
+            const seasonB = extractSeason(b);
+            
+            // Compare years first (descending)
+            if (yearB !== yearA) {
+                return yearB - yearA;
+            }
+            
+            // If years are the same, compare seasons
+            return getSeasonOrder(seasonB) - getSeasonOrder(seasonA);
+        });
+        
         // Add options for each file
-        files.forEach(file => {
+        sortedFiles.forEach(file => {
             const option = document.createElement('option');
             option.value = file;
             
             // Format the display name from the filename
             let displayName = file.replace('.csv', '');
+            // Remove "_anime_references" from the name
+            displayName = displayName.replace(/_anime_references/g, '');
             displayName = displayName.replace(/_/g, ' ');
             
             option.textContent = displayName;
             csvSelect.appendChild(option);
         });
+    }
+
+    // Helper function to extract year from filename
+    function extractYear(filename) {
+        const match = filename.match(/\b(20\d\d)\b/);
+        return match ? parseInt(match[1]) : 0;
+    }
+
+    // Helper function to extract season from filename
+    function extractSeason(filename) {
+        const seasons = ['Spring', 'Summer', 'Fall', 'Winter'];
+        for (const season of seasons) {
+            if (filename.includes(season)) {
+                return season;
+            }
+        }
+        return '';
+    }
+
+    // Helper function to get season order (Spring: 3, Summer: 2, Fall: 1, Winter: 0)
+    function getSeasonOrder(season) {
+        const seasonOrder = {
+            'Spring': 3,
+            'Summer': 2,
+            'Fall': 1, 
+            'Winter': 0
+        };
+        
+        return seasonOrder[season] || -1; // Return -1 for unknown seasons
     }
 
     async function loadSelectedCSV() {
