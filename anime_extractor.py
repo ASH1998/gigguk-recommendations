@@ -284,8 +284,8 @@ def main():
     
     # Set up command-line argument parsing
     parser = argparse.ArgumentParser(description='Extract anime references from Gigguk YouTube videos')
-    parser.add_argument('video_id', nargs='?', default="qUkxvTi06ww", 
-                        help='YouTube video ID to process (default: qUkxvTi06ww)')
+    parser.add_argument('video_id', 
+                        help='YouTube video ID to process')
     args = parser.parse_args()
     
     # Load environment variables from .env file
