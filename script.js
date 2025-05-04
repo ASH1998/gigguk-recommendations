@@ -117,6 +117,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 csvSelect.value = files[0];
                 loadSelectedCSV();
             }
+        } finally {
+            hideLoading();
         }
     }
 
@@ -223,7 +225,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('Error loading CSV:', error);
             tableBody.innerHTML = `<tr><td colspan="4">Error loading data: ${error.message}</td></tr>`;
         } finally {
-            loading.classList.add('hidden');
+            hideLoading();
         }
     }
 
@@ -415,5 +417,9 @@ document.addEventListener('DOMContentLoaded', () => {
             
             tableBody.appendChild(row);
         });
+    }
+
+    function hideLoading() {
+        document.getElementById('loading').style.display = 'none';
     }
 });
