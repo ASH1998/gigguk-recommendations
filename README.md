@@ -25,6 +25,7 @@ A modern web application that organizes and displays anime recommendations from 
   - [Web Interface](#web-interface)
   - [Extracting New Anime References](#extracting-new-anime-references)
 - [Project Structure](#project-structure)
+- [Changelog](#changelog)
 - [Contributing](#contributing)
 - [License](#license)
 - [Credits](#credits)
