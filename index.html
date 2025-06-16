@@ -51,8 +51,16 @@
             <div class="search-container">
                 <label for="search-input">Search Anime:</label>
                 <div class="search-input-group">
-                    <input type="text" id="search-input" placeholder="Search anime...">
-                    <button id="search-btn"><i class="fas fa-search"></i></button>
+                    <input type="text" id="search-input" placeholder="Search anime titles or notes...">
+                    <button id="search-btn" title="Search current video">
+                        <i class="fas fa-search"></i> Search
+                    </button>
+                    <button id="global-search-btn" title="Search across all videos" class="global-search-btn">
+                        <i class="fas fa-globe"></i> All Videos
+                    </button>
+                </div>
+                <div class="search-mode-indicator">
+                    <span id="search-mode-text">Searching in current video only</span>
                 </div>
             </div>
         </div>
@@ -65,6 +73,7 @@
                         <th>Timestamp <span class="sort-icon" data-column="timestamp"><i class="fas fa-sort"></i></span></th>
                         <th>Excitement <span class="sort-icon" data-column="excited"><i class="fas fa-sort"></i></span></th>
                         <th>Notes</th>
+                        <!-- Source column will be added dynamically when in global search mode -->
                     </tr>
                 </thead>
                 <tbody id="table-body">
@@ -74,7 +83,7 @@
         </div>
 
         <div id="no-results" class="hidden">
-            <p>No results found. Try a different search term.</p>
+            <p>No results found. Try a different search term or check different filters.</p>
         </div>
 
         <div class="loading" id="loading">
