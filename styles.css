@@ -302,6 +302,19 @@ footer {
     th:nth-child(3), td:nth-child(3) {
         display: none;
     }
+    
+    /* Responsive styling for mobile */
+    #search-btn {
+        padding: 10px 12px;
+    }
+    
+    #search-btn::after {
+        content: none;
+    }
+    
+    .search-input-group {
+        flex-wrap: nowrap;
+    }
 }
 
 @media (min-width: 1600px) {
@@ -478,4 +491,173 @@ input:checked + .slider:before {
 [data-theme="dark"] option {
     background-color: var(--card-background);
     color: var(--input-text-color);
+}
+
+/* Source column styling */
+.source-cell {
+    font-size: 0.9rem;
+    color: var(--primary-color);
+    font-weight: 500;
+}
+
+/* Highlight the source on hover to make it more distinguishable */
+tr:hover .source-cell {
+    color: var(--secondary-color);
+}
+
+/* Responsive styles for source column */
+@media screen and (max-width: 768px) {
+    .source-cell {
+        font-size: 0.8rem;
+    }
+}
+
+/* Global search button styling */
+.global-search-btn {
+    background-color: var(--secondary-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 15px;
+    margin-left: 10px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.global-search-btn:hover {
+    background-color: #ff5252;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.global-search-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 3px rgba(0,0,0,0.1);
+}
+
+.global-search-btn.active {
+    background-color: #4caf50;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.global-search-btn.active:hover {
+    background-color: #43a047;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+/* Button Animation */
+.btn-pulse {
+    animation: buttonPulse 2s infinite;
+}
+
+@keyframes buttonPulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(95, 101, 245, 0.4);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(95, 101, 245, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(95, 101, 245, 0);
+    }
+}
+
+/* Search mode indicator */
+.search-mode-indicator {
+    font-size: 0.8rem;
+    color: var(--primary-color);
+    margin-top: 8px;
+    font-style: italic;
+    display: flex;
+    align-items: center;
+}
+
+.search-mode-indicator::before {
+    content: '';
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background-color: var(--primary-color);
+    border-radius: 50%;
+    margin-right: 6px;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(95, 101, 245, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 6px rgba(95, 101, 245, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(95, 101, 245, 0);
+    }
+}
+
+/* Mobile search input and button styling */
+#search-input {
+    flex: 1;
+    padding: 10px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px 0 0 4px;
+    font-size: 1rem;
+    background-color: var(--card-background);
+    color: var(--input-text-color);
+    transition: border-color 0.3s;
+}
+
+#search-btn {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 1rem;
+    border-radius: 0 4px 4px 0;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#search-btn:hover {
+    background-color: #4f55e5;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+#search-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 3px rgba(0,0,0,0.1);
+}
+
+/* Responsive styling for mobile */
+@media screen and (max-width: 768px) {
+    .global-search-btn span {
+        display: none;
+    }
+    
+    .global-search-btn {
+        padding: 10px 12px;
+    }
+    
+    #search-btn {
+        padding: 10px 12px;
+    }
+    
+    #search-btn::after {
+        content: none;
+    }
+    
+    .search-input-group {
+        flex-wrap: nowrap;
+    }
 }
