@@ -3,6 +3,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const csvSelect = document.getElementById('csv-select');
     const searchInput = document.getElementById('search-input');
     const searchBtn = document.getElementById('search-btn');
+    const globalSearchBtn = document.getElementById('global-search-btn');
+    const searchModeText = document.getElementById('search-mode-text');
     const excitementFilter = document.getElementById('excitement-filter');
     const tableBody = document.getElementById('table-body');
     const noResults = document.getElementById('no-results');
@@ -11,23 +13,48 @@ document.addEventListener('DOMContentLoaded', () => {
     const themeToggle = document.getElementById('theme-toggle');
 
     // State
-    let animeData = [];
-    let filteredData = [];
+    let animeData = [];         // Current selected CSV data
+    let allAnimeData = {};      // All CSV data with filename as key
+    let filteredData = [];      // Currently displayed data
     let currentSort = {
         column: null,
         direction: 'asc'
     };
+    let globalSearchActive = false; // Flag to track if global search is active
+    let globalSearchModeEnabled = false; // Flag to track if global search mode is enabled
 
     // Initialize
+    resetTableHeaders();
     loadCSVList();
     initTheme();
 
     // Event Listeners
     csvSelect.addEventListener('change', loadSelectedCSV);
-    searchBtn.addEventListener('click', filterData);
-    searchInput.addEventListener('keyup', (e) => {
-        if (e.key === 'Enter') filterData();
+    searchBtn.addEventListener('click', function() {
+        // Add pulse animation for visual feedback
+        searchBtn.classList.add('btn-pulse');
+        
+        // Remove the animation class after the search completes
+        setTimeout(() => {
+            searchBtn.classList.remove('btn-pulse');
+        }, 1000);
+        
+        filterData();
     });
+    searchInput.addEventListener('keyup', (e) => {
+        if (e.key === 'Enter') {
+            // Add pulse animation for visual feedback
+            searchBtn.classList.add('btn-pulse');
+            
+            // Remove the animation class after the search completes
+            setTimeout(() => {
+                searchBtn.classList.remove('btn-pulse');
+            }, 1000);
+            
+            filterData();
+        }
+    });
+    globalSearchBtn.addEventListener('click', toggleGlobalSearch);
     excitementFilter.addEventListener('change', filterData);
     
     sortIcons.forEach(icon => {
@@ -47,6 +74,54 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.setItem('theme', 'light');
         }
     });
+
+    /**
+     * Toggle global search mode
+     */
+    function toggleGlobalSearch() {
+        globalSearchModeEnabled = !globalSearchModeEnabled;
+        
+        // Add pulse animation for visual feedback
+        globalSearchBtn.classList.add('btn-pulse');
+        
+        // Remove the animation class after the toggle completes
+        setTimeout(() => {
+            globalSearchBtn.classList.remove('btn-pulse');
+        }, 1000);
+        
+        // Update button appearance
+        if (globalSearchModeEnabled) {
+            globalSearchBtn.classList.add('active');
+            searchModeText.textContent = 'Searching across all videos';
+            searchInput.placeholder = 'Search anime titles or notes across all videos...';
+        } else {
+            globalSearchBtn.classList.remove('active');
+            searchModeText.textContent = 'Searching in current video only';
+            searchInput.placeholder = 'Search anime titles or notes...';
+        }
+        
+        // Reset table structure
+        resetTableHeaders();
+        
+        // Re-filter data with new search mode
+        filterData();
+    }
+    
+    /**
+     * Reset table headers to ensure proper structure
+     */
+    function resetTableHeaders() {
+        const tableHead = document.querySelector('#anime-table thead tr');
+        
+        // Get all column headers
+        const columns = tableHead.querySelectorAll('th');
+        
+        // Keep only the first 4 standard columns (Title, Timestamp, Excitement, Notes)
+        // and remove any Source columns
+        for (let i = 4; i < columns.length; i++) {
+            tableHead.removeChild(columns[i]);
+        }
+    }
 
     // Functions
     function initTheme() {
@@ -80,7 +155,10 @@ document.addEventListener('DOMContentLoaded', () => {
             
             populateSelect(files);
             
-            // Load the first CSV by default
+            // Load all CSV files in background
+            await loadAllCSVFiles(files);
+            
+            // Load the first CSV by default for display
             if (files.length > 0) {
                 csvSelect.value = files[0];
                 loadSelectedCSV();
@@ -103,6 +181,56 @@ document.addEventListener('DOMContentLoaded', () => {
         } finally {
             hideLoading();
         }
+    }
+    
+    async function loadAllCSVFiles(files) {
+        try {
+            const promises = files.map(async (file) => {
+                try {
+                    const response = await fetch(`transcripts/${file}`);
+                    if (!response.ok) {
+                        console.error(`Failed to load file: ${file}`);
+                        return null;
+                    }
+                    
+                    const csvText = await response.text();
+                    const data = parseCSV(csvText);
+                    
+                    // Add source information to each item
+                    const formattedData = data.map(item => {
+                        const source = formatSource(file);
+                        return { ...item, Source: source };
+                    });
+                    
+                    return { file, data: formattedData };
+                } catch (error) {
+                    console.error(`Error loading ${file}:`, error);
+                    return null;
+                }
+            });
+            
+            const results = await Promise.all(promises);
+            
+            // Process results
+            results.forEach(result => {
+                if (result) {
+                    allAnimeData[result.file] = result.data;
+                }
+            });
+            
+            console.log(`Loaded ${Object.keys(allAnimeData).length} CSV files`);
+        } catch (error) {
+            console.error('Error loading CSV files:', error);
+        }
+    }
+    
+    function formatSource(filename) {
+        // Format the display name from the filename
+        let displayName = filename.replace('.csv', '');
+        // Remove "_anime_references" from the name
+        displayName = displayName.replace(/_anime_references/g, '');
+        displayName = displayName.replace(/_/g, ' ');
+        return displayName;
     }
 
     function populateSelect(files) {
@@ -176,6 +304,16 @@ document.addEventListener('DOMContentLoaded', () => {
         tableBody.innerHTML = '';
         noResults.classList.add('hidden');
         
+        // Reset global search only if global mode isn't enabled
+        if (!globalSearchModeEnabled) {
+            globalSearchActive = false;
+        } else {
+            globalSearchActive = true;
+        }
+        
+        // Reset the table headers
+        resetTableHeaders();
+        
         const selectedFile = csvSelect.value;
         
         if (!selectedFile) {
@@ -184,14 +322,29 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         try {
-            const response = await fetch(`transcripts/${selectedFile}`);
-            
-            if (!response.ok) {
-                throw new Error(`Failed to load file: ${selectedFile}`);
+            // If we've already loaded this file, use the cached data
+            if (allAnimeData[selectedFile]) {
+                animeData = allAnimeData[selectedFile];
+            } else {
+                // Otherwise fetch and parse it
+                const response = await fetch(`transcripts/${selectedFile}`);
+                
+                if (!response.ok) {
+                    throw new Error(`Failed to load file: ${selectedFile}`);
+                }
+                
+                const csvText = await response.text();
+                const parsedData = parseCSV(csvText);
+                
+                // Add source information to each item
+                animeData = parsedData.map(item => {
+                    const source = formatSource(selectedFile);
+                    return { ...item, Source: source };
+                });
+                
+                // Cache the data
+                allAnimeData[selectedFile] = animeData;
             }
-            
-            const csvText = await response.text();
-            animeData = parseCSV(csvText);
             
             // Reset filters
             searchInput.value = '';
@@ -260,19 +413,50 @@ document.addEventListener('DOMContentLoaded', () => {
         const searchTerm = searchInput.value.toLowerCase();
         const excitementLevel = excitementFilter.value;
         
-        filteredData = animeData.filter(anime => {
-            // Filter by search term
-            const matchesSearch = 
-                anime['Anime Title']?.toLowerCase().includes(searchTerm) ||
-                anime['Notes']?.toLowerCase().includes(searchTerm);
+        // Determine if we should do global search based on search term and global mode
+        // Global search is active if: global mode is enabled OR search term is non-empty and global mode is enabled
+        const shouldDoGlobalSearch = globalSearchModeEnabled;
+        
+        if (shouldDoGlobalSearch) {
+            globalSearchActive = true;
             
-            // Filter by excitement level
-            const matchesExcitement = 
-                excitementLevel === 'all' || 
-                (anime['Gigguk Excited?'] && anime['Gigguk Excited?'].includes(excitementLevel));
+            // Combine all anime data from all CSV files
+            let combinedData = [];
+            for (const filename in allAnimeData) {
+                combinedData = combinedData.concat(allAnimeData[filename]);
+            }
             
-            return matchesSearch && matchesExcitement;
-        });
+            filteredData = combinedData.filter(anime => {
+                // Filter by search term if there is one
+                const matchesSearch = searchTerm.length === 0 || 
+                    anime['Anime Title']?.toLowerCase().includes(searchTerm) ||
+                    anime['Notes']?.toLowerCase().includes(searchTerm);
+                
+                // Filter by excitement level
+                const matchesExcitement = 
+                    excitementLevel === 'all' || 
+                    (anime['Gigguk Excited?'] && anime['Gigguk Excited?'].includes(excitementLevel));
+                
+                return matchesSearch && matchesExcitement;
+            });
+        } else {
+            // Only filter the current selected CSV
+            globalSearchActive = false;
+            
+            filteredData = animeData.filter(anime => {
+                // Filter by search term if there is one
+                const matchesSearch = searchTerm.length === 0 || 
+                    anime['Anime Title']?.toLowerCase().includes(searchTerm) ||
+                    anime['Notes']?.toLowerCase().includes(searchTerm);
+                
+                // Filter by excitement level
+                const matchesExcitement = 
+                    excitementLevel === 'all' || 
+                    (anime['Gigguk Excited?'] && anime['Gigguk Excited?'].includes(excitementLevel));
+                
+                return matchesSearch && matchesExcitement;
+            });
+        }
         
         // Apply current sort if any
         if (currentSort.column) {
@@ -329,6 +513,9 @@ document.addEventListener('DOMContentLoaded', () => {
             } else if (column === 'excited') {
                 valueA = a['Gigguk Excited?'] || '';
                 valueB = b['Gigguk Excited?'] || '';
+            } else if (column === 'source') {
+                valueA = a['Source'] || '';
+                valueB = b['Source'] || '';
             }
             
             // String comparison for non-numeric values
@@ -353,12 +540,54 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderTable(data) {
         tableBody.innerHTML = '';
         
+        // Update the search mode indicator
+        if (globalSearchActive) {
+            searchModeText.textContent = 'Searching across all videos';
+            if (globalSearchModeEnabled) {
+                globalSearchBtn.classList.add('active');
+            }
+        } else {
+            searchModeText.textContent = 'Searching in current video only';
+            globalSearchBtn.classList.remove('active');
+        }
+        
         if (data.length === 0) {
             noResults.classList.remove('hidden');
+            // Update the no results message based on global search status
+            if (globalSearchActive) {
+                noResults.innerHTML = '<p>No results found across all videos. Try a different search term or check different filters.</p>';
+            } else {
+                noResults.innerHTML = '<p>No results found in the current video. Try a different search term or check different filters.</p>';
+            }
             return;
         }
         
         noResults.classList.add('hidden');
+        
+        // Update table headers based on global search mode - first clear out any existing Source columns
+        const tableHead = document.querySelector('#anime-table thead tr');
+        
+        // Remove ALL existing Source column headers (to fix the duplicate issue)
+        const existingSourceColumns = tableHead.querySelectorAll('th[data-column="source"]');
+        existingSourceColumns.forEach(column => {
+            tableHead.removeChild(column);
+        });
+        
+        // Now add a single Source column if we're in global search mode
+        if (globalSearchActive) {
+            // Add Source column header
+            const sourceHeader = document.createElement('th');
+            sourceHeader.setAttribute('data-column', 'source'); // Add data-column attribute
+            sourceHeader.innerHTML = 'Source <span class="sort-icon" data-column="source"><i class="fas fa-sort"></i></span>';
+            tableHead.appendChild(sourceHeader);
+            
+            // Add event listener to the new sort icon
+            const sourceIcon = sourceHeader.querySelector('.sort-icon');
+            sourceIcon.addEventListener('click', () => {
+                const column = sourceIcon.getAttribute('data-column');
+                sortData(column);
+            });
+        }
         
         data.forEach(anime => {
             const row = document.createElement('tr');
@@ -397,6 +626,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const notesCell = document.createElement('td');
             notesCell.textContent = anime['Notes'] || '';
             row.appendChild(notesCell);
+            
+            // Source (only show when in global search mode)
+            if (globalSearchActive) {
+                const sourceCell = document.createElement('td');
+                sourceCell.textContent = anime['Source'] || '';
+                sourceCell.className = 'source-cell';
+                row.appendChild(sourceCell);
+            }
             
             tableBody.appendChild(row);
         });
